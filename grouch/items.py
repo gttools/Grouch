@@ -12,3 +12,14 @@ class GrouchItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     pass
+
+class Course(scrapy.Item):
+    name = scrapy.Field()
+    number = scrapy.Field()
+    college = scrapy.Field()
+    fields = scrapy.Field()
+    prerequisites = scrapy.Field()
+    corequisites = scrapy.Field()
+    grade_basis = scrapy.Field()
+    restrictions = scrapy.Field()
+    course_attributes = scrapy.Field()
