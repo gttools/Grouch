@@ -1,8 +1,7 @@
 import scrapy
-from grouch.spiders.oscar_spider import OscarSpider
 import unittest
-import CS1332
-
+from grouch.spiders.oscar_spider import OscarSpider
+from grouch.test import CS1332
 
 class TestOscarSpider(unittest.TestCase):
     def setUp(self):
