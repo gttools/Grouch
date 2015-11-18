@@ -7,16 +7,17 @@
 
 import scrapy
 
-
 class GrouchItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     pass
 
+
 class Course(scrapy.Item):
+    fullname = scrapy.Field()
     name = scrapy.Field()
     number = scrapy.Field()
-    college = scrapy.Field()
+    school = scrapy.Field()
     fields = scrapy.Field()
     prerequisites = scrapy.Field()
     corequisites = scrapy.Field()
