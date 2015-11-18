@@ -1,12 +1,12 @@
 import scrapy
 from grouch.spiders.oscar_spider import OscarSpider
 import unittest
-import response
+import CS1332
 
 
 class TestOscarSpider(unittest.TestCase):
     def setUp(self):
-        self.response = scrapy.http.TextResponse("",body=response.resp)
+        self.response = scrapy.http.TextResponse("",body=CS1332.resp)
         self.spider = OscarSpider()
 
     def test_parse_detail(self):
