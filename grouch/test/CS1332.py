@@ -1,4 +1,4 @@
-resp = str("""
+body = str("""
 <table class="datadisplaytable" summary="This table lists the course detail for the selected term." width="100%">
     <tbody><tr>
         <td class="nttitle" scope="colgroup">CS 1332 - Data Struct &amp; Algorithms</td>
