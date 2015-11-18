@@ -8,12 +8,46 @@ class OscarSpider(scrapy.Spider):
     name = "oscar"
     allowed_domains = ['oscar.gatech.edu']
     start_urls = ['https://oscar.gatech.edu/pls/bprod/bwckctlg.p_disp_dyn_ctlg']
+    
+
+    @staticmethod
+    def get_grade_basis(response):
+        string = response.css('td.ntdefault').re("Grade Basis[\S\s]*?<br>([\S\s]*?)<span")[0]
+        pass
+
+    @staticmethod
+    def get_attributes(response):
+        string = response.css('td.ntdefault').re("Attributes[\S\s]*?<br>([\S\s]*?)<span")[0]
+        pass
+
+    @staticmethod
+    def get_restrictions(response):
+        string = response.css('td.ntdefault').re("Restrictions[\S\s]*?<br>([\S\s]*?)<span")[0]
+        pass
+
+    @staticmethod
+    def get_corequisites(response):
+        string = response.css('td.ntdefault').re("Corequisites[\S\s]*?<br>([\S\s]*?)<br>")[0]
+        string = remove_tags.sub("", string)
+        string = remove_semester.sub("", string)
+        string = remove_minimum.sub("", string)
+        return string.lstrip()
+
+    @staticmethod
+    def get_prerequisites(response):
+
+        string = response.css('td.ntdefault').re("Prerequisites[\S\s]*?<br>([\S\s]*?)<br>")[0]
+        string = remove_tags.sub("", string)
+        string = remove_semester.sub("", string)
+        string = remove_minimum.sub("", string)
+        return string.lstrip()
+
     field_formats = {
-        "Grade Basis": None,
-        "Restrictions": None,
-        "Prerequisites": None,
-        "Course Attributes": None,
-        "Corequisites": None
+        "Grade Basis": get_grade_basis,
+        "Restrictions": get_restrictions,
+        "Prerequisites": get_prerequisites,
+        "Course Attributes": get_attributes,
+        "Corequisites": get_corequisites
     }
 
     def parse(self, response):
@@ -51,6 +85,6 @@ class OscarSpider(scrapy.Spider):
         loader.add_css('number', 'td.nttitle::text', TakeFirst(), re='\d+')
 
         for field in loader.item.fields:
-            pass
+            pass            
 
         return loader.load_item()
