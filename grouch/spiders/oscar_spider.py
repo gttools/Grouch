@@ -1,6 +1,5 @@
 import scrapy
-from scrapy.loader import ItemLoader
-from scrapy.loader.processors import TakeFirst
+from grouch.loaders import CourseLoader
 import grouch
 
 
@@ -35,7 +34,6 @@ class OscarSpider(scrapy.Spider):
 
     @staticmethod
     def get_prerequisites(response):
-
         string = response.css('td.ntdefault').re("Prerequisites[\S\s]*?<br>([\S\s]*?)<br>")[0]
         string = remove_tags.sub("", string)
         string = remove_semester.sub("", string)
@@ -57,7 +55,7 @@ class OscarSpider(scrapy.Spider):
         # url = response.css(".pagebodydiv form::attr(action)").re(".*")[0]  # url
         term_name = response.css("#term_input_id::attr(name)").re(".*")[0]
         terms = response.css("#term_input_id option::attr(value)").re("\d{6}")
-        for term in terms[0:1]:
+        for term in terms[:grouch.settings.SEMESTER_STOP]:
             yield scrapy.FormRequest.from_response(response,
                                                    callback=self.parse_term,
                                                    formdata={term_name: term})
@@ -77,12 +75,12 @@ class OscarSpider(scrapy.Spider):
             yield scrapy.Request(self.base+url, self.parse_detail)
 
     def parse_detail(self, response):
-        loader = ItemLoader(item=grouch.items.Course(), response=response)
+        loader = CourseLoader(item=grouch.items.Course(), response=response)
         loader.add_css('fields', 'span.fieldlabeltext::text', re='^(.*?):')
-        loader.add_css('fullname', 'td.nttitle::text', TakeFirst(), re='.*')
-        loader.add_css('name', 'td.nttitle::text', TakeFirst(), re='- (.*)')
-        loader.add_css('school', 'td.nttitle::text', TakeFirst(), re='(.*?) ')
-        loader.add_css('number', 'td.nttitle::text', TakeFirst(), re='\d+')
+        loader.add_css('fullname', 'td.nttitle::text', re='.*')
+        loader.add_css('name', 'td.nttitle::text', re='- (.*)')
+        loader.add_css('school', 'td.nttitle::text', re='(.*?) ')
+        loader.add_css('number', 'td.nttitle::text', re='\d+')
 
         for field in loader.item.fields:
             pass            

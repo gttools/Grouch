@@ -14,6 +14,9 @@ BOT_NAME = 'grouch'
 SPIDER_MODULES = ['grouch.spiders']
 NEWSPIDER_MODULE = 'grouch.spiders'
 
+# -1 for all of them
+SEMESTER_STOP = 5
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'grouch (+http://www.yourdomain.com)'
