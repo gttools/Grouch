@@ -7,6 +7,7 @@ class OscarSpider(scrapy.Spider):
     name = "oscar"
     allowed_domains = ['oscar.gatech.edu']
     start_urls = ['https://oscar.gatech.edu/pls/bprod/bwckctlg.p_disp_dyn_ctlg']
+    base = 'https://oscar.gatech.edu'
     
 
     @staticmethod
@@ -62,7 +63,9 @@ class OscarSpider(scrapy.Spider):
 
     def parse_term(self, response):
         subjects = response.css("#subj_id option::attr(value)").re(".*")
-        for subject in ["CS"]:  #subjects:
+        if grouch.settings.SUBJECTS:
+            subjects = grouch.settings.SUBJECTS
+        for subject in subjects :  #subjects:
             yield scrapy.FormRequest.from_response(response,
                                                    callback=self.parse_courses,
                                                    formdata={"sel_subj": ["dummy", subject]})
