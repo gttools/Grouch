@@ -1,6 +1,7 @@
 import scrapy
 from grouch.loaders import CourseLoader
 import grouch
+from grouch import items
 
 
 class OscarSpider(scrapy.Spider):
@@ -46,7 +47,7 @@ class OscarSpider(scrapy.Spider):
             yield scrapy.Request(self.base+url, self.parse_detail)
 
     def parse_detail(self, response):
-        loader = CourseLoader(item=grouch.items.Course(), response=response)
+        loader = CourseLoader(item=items.Course(), response=response)
         loader.add_css('fields', 'span.fieldlabeltext::text', re='^(.*?):')
         loader.add_css('fullname', 'td.nttitle::text', re='.*')
         loader.add_css('name', 'td.nttitle::text', re='- (.*)')
