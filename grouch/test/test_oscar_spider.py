@@ -27,6 +27,7 @@ class TestOscarSpider(unittest.TestCase):
         self.assertEqual(item['name'], "Data Struct & Algorithms")
         self.assertEqual(item['school'], "CS")
         self.assertEqual(item['number'], "1332")
+        self.assertEqual(item['prerequisites'], [u'CS 1322', u'or', u'CS 1331'])
 
 
     # extensive use of mocking below
