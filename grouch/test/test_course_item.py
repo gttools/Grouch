@@ -19,6 +19,7 @@ class TestCourseItem(unittest.TestCase):
         self.assertEqual(item['prerequisites'], ['CS1331', 'CS2110'])
 
 class TestCourseLoader(unittest.TestCase):
+    maxDiff = None
     def setUp(self):
         self.long_example = ("Undergraduate Semester level MATH 3215 Minimum Grade of D or"
             " Undergraduate Semester level MATH 3770 Minimum Grade of D or Undergraduate Semester level MATH 3670"
@@ -81,3 +82,21 @@ class TestCourseLoader(unittest.TestCase):
             'MATH 3012', 'and', '(', 'MATH 3215', 'or', 'MATH 3770', 'or', 'MATH 3670',
             'or', 'CEE 3770', 'or', 'ISYE 3770', 'or', '(', 'ISYE 2027', 'and', 'ISYE 2028',
             ')', ')'])
+
+    def test_parse_tokens(self):
+        example_prepped = loaders.remove_whitespace(loaders.tokenize_and_or(
+            loaders.strip_irrelevant(loaders.remove_tags(self.longer_example))))
+        parsed = loaders.parse_tokens(example_prepped)
+        correct = {'type': 'and', 'courses': [
+            {'type' : 'or', 'courses' : [u'CS 3510', u'CS 3511']},
+            u'MATH 3012',
+            {'type' : 'or', 'courses': [
+                u'MATH 3215',
+                u'MATH 3770',
+                u'MATH 3670',
+                u'CEE 3770',
+                u'ISYE 3770',
+                {'type': 'and', 'courses': [u'ISYE 2027', u'ISYE 2028']}
+            ]}
+        ]}
+        self.assertEqual(parsed, correct)

@@ -19,6 +19,35 @@ def tokenize_and_or(item):
 def remove_whitespace(item):
     return [x.strip() for x in item if x.strip()]
 
+def _parse_inner(gen, d):
+    d['type'] = None
+    d['courses'] = []
+    for token in gen:
+        if token == "(":
+            d['courses'].append(_parse_inner(gen, {}))
+        elif token == ")":
+            return d
+        elif token == "and":
+            d['type'] = "and"
+        elif token == "or":
+            d['type'] = "or"
+        else:
+            d['courses'].append(token)
+    return d
+
+
+def parse_tokens(item):
+    """
+    This deserves a quick explanation. Python generators are like lists that can
+    be iterated over exatly once. Once an item is consumed it disappears. In
+    this set of functions, the generator is passed down the parse tree. Thus,
+    each token is looked at exactly once. This results in an efficient and
+    relatively simple parser.
+    """
+    gen = (x for x in item)
+    return _parse_inner(gen, {})
+
+
 class CourseLoader(scrapy.loader.ItemLoader):
     default_output_processor = TakeFirst()
     default_input_processor = TakeFirst()
@@ -26,8 +55,8 @@ class CourseLoader(scrapy.loader.ItemLoader):
     fields_in = Identity()
     fields_out = Identity()
 
-    prerequisites_in = Compose(TakeFirst(), remove_tags, strip_irrelevant, tokenize_and_or, remove_whitespace)
-    prerequisites_out = Identity()
+    prerequisites_in = Compose(TakeFirst(), remove_tags, strip_irrelevant, tokenize_and_or, remove_whitespace, parse_tokens)
+    prerequisites_out = TakeFirst()
 
-    corequisites_in = Compose(TakeFirst(), remove_tags, strip_irrelevant, tokenize_and_or, remove_whitespace)
-    corequisites_out = Identity()
+    corequisites_in = Compose(TakeFirst(), remove_tags, strip_irrelevant, tokenize_and_or, remove_whitespace, parse_tokens)
+    corequisites_out = TakeFirst()
