@@ -1,10 +1,10 @@
 import scrapy
-from scrapy.loader.processors import TakeFirst, Identity, Compose
+from scrapy.loader.processors import TakeFirst, Identity, Compose, Join
 import w3lib
 import re
 
 level = re.compile(r' ?Undergraduate Semester level| ?Graduate Semester level')
-grade = re.compile(r' Minimum Grade of [ABCDF]')
+grade = re.compile(r' Minimum Grade of [ABCDFSTU]')
 splitter = re.compile(r'([A-Z]{2,4} [\dX]{4}|\(|\)|\W+)')
 
 def remove_tags(item):
@@ -20,7 +20,7 @@ def remove_whitespace(item):
     return [x.strip() for x in item if x.strip()]
 
 def _parse_inner(gen, d):
-    d['type'] = None
+    d['type'] = 'and'
     d['courses'] = []
     for token in gen:
         if token == "(":
@@ -31,6 +31,10 @@ def _parse_inner(gen, d):
             d['type'] = "and"
         elif token == "or":
             d['type'] = "or"
+        elif token == "Converted":
+            pass
+        elif token == "SAT" or token == "ACT":
+            d['courses'].append(" ".join((token, next(gen), next(gen))))
         else:
             d['courses'].append(token)
     return d
@@ -42,7 +46,7 @@ def parse_tokens(item):
     be iterated over exatly once. Once an item is consumed it disappears. In
     this set of functions, the generator is passed down the parse tree. Thus,
     each token is looked at exactly once. This results in an efficient and
-    relatively simple parser.
+    relatively simple parser
     """
     gen = (x for x in item)
     return _parse_inner(gen, {})
@@ -60,3 +64,7 @@ class CourseLoader(scrapy.loader.ItemLoader):
 
     corequisites_in = Compose(TakeFirst(), remove_tags, strip_irrelevant, tokenize_and_or, remove_whitespace, parse_tokens)
     corequisites_out = TakeFirst()
+
+    course_attributes_out = Join()
+    restrictions_out = Join()
+    grade_basis_out = Join()

@@ -35,6 +35,9 @@ class TestCourseLoader(unittest.TestCase):
             "D or (Undergraduate Semester level ISYE 2027 Minimum Grade of D and Undergraduate Semester level ISYE "
             "2028 Minimum Grade of D) )")
 
+        self.sat_example = ("Undergraduate Semester level MATH 1113 Minimum Grade of D or SAT Mathematics 550 or "
+                            "Converted ACT Math 550")
+
     def test_remove_tags(self):
         string = loaders.remove_tags("<b>This is a string</b>")
         self.assertEqual(string, "This is a string")
@@ -99,4 +102,11 @@ class TestCourseLoader(unittest.TestCase):
                 {'type': 'and', 'courses': [u'ISYE 2027', u'ISYE 2028']}
             ]}
         ]}
+        self.assertEqual(parsed, correct)
+
+    def test_sat_act(self):
+        example_prepped = loaders.remove_whitespace(loaders.tokenize_and_or(
+            loaders.strip_irrelevant(loaders.remove_tags(self.sat_example))))
+        parsed = loaders.parse_tokens(example_prepped)
+        correct = {'courses': [u'MATH 1113', u'SAT Mathematics 550', u'ACT Math 550'], 'type': 'or'}
         self.assertEqual(parsed, correct)
