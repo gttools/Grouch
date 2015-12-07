@@ -55,11 +55,15 @@ class TestOscarSpider(unittest.TestCase):
             results = list(self.spider.parse_term(self.term))
             if settings.SUBJECTS:
                 self.assertEqual(len(results), len(settings.SUBJECTS))
+            subj = settings.SUBJECTS[0] if settings.SUBJECTS else "ACCT"
+            # this is a workaround since the subjects parsed can change based on
+            # settings in the config file (settings.py), so these tests are
+            # invariant to local settings
             call = mock.mock_calls[0]
             self.assertEqual(call[1][0], self.term)
             self.assertEqual(call[2], {
                 'callback': self.spider.parse_courses,
-                'formdata' : {u'sel_subj': ['dummy', 'CS']}
+                'formdata' : {u'sel_subj': ['dummy', subj]}
                 })
 
     def test_parse_courses(self):
