@@ -73,5 +73,3 @@ class CourseLoader(scrapy.loader.ItemLoader):
     restrictions_out = Join()
     grade_basis_out = Join()
 
-    hours_in = Compose(Join())
-    hours_out = Identity()

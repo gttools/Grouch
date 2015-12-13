@@ -26,5 +26,3 @@ class Course(scrapy.Item):
     course_attributes = scrapy.Field()
     hours = scrapy.Field()
 
-
-
