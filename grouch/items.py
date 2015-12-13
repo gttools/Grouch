@@ -24,5 +24,7 @@ class Course(scrapy.Item):
     grade_basis = scrapy.Field()
     restrictions = scrapy.Field()
     course_attributes = scrapy.Field()
+    hours = scrapy.Field()
+
 
 

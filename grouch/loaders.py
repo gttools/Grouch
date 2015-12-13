@@ -20,6 +20,10 @@ def remove_whitespace(item):
     return [x.strip() for x in item if x.strip()]
 
 def _parse_inner(gen, d):
+    """
+    Converts a string into a nested json structure representing course prerequisites
+    via a recursive algorithm
+    """
     d['type'] = 'and'
     d['courses'] = []
     for token in gen:
@@ -68,3 +72,6 @@ class CourseLoader(scrapy.loader.ItemLoader):
     course_attributes_out = Join()
     restrictions_out = Join()
     grade_basis_out = Join()
+
+    hours_in = Compose(Join())
+    hours_out = Identity()
