@@ -53,9 +53,10 @@ class OscarSpider(scrapy.Spider):
         loader.add_css('name', 'td.nttitle::text', re='- (.*)')
         loader.add_css('school', 'td.nttitle::text', re='(.*?) ')
         loader.add_css('number', 'td.nttitle::text', re='\d+')
+        loader.add_css('hours', 'td.ntdefault::text', re='(.*?)<span')
         
         for field in loader._values['fields']:  # introspect the loader
-            regex = "{}[\S\s]*?<br>([\S\s]*?)<br>".format(field)
+            regex = "{}[\S\s]*?<\/span>([\S\s]*?)(?:<span|<\/td>)".format(field)
             loader.add_css(self.field_formats[field], 'td.ntdefault', re=regex)
             
 
