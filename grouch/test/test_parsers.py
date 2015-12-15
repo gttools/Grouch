@@ -1,5 +1,6 @@
 import unittest
 from grouch.parsers.prerequisite_parser import PrerequisiteParser as pp
+from grouch.parsers.restriction_parser import RestrictionParser as rp
 
 class TestPrerequisiteParser(unittest.TestCase):
     maxDiff = None
@@ -94,3 +95,23 @@ class TestPrerequisiteParser(unittest.TestCase):
         parsed = pp.parse_tokens(example_prepped)
         correct = {'courses': [u'MATH 1113', u'SAT Mathematics 550', u'ACT Math 550'], 'type': 'or'}
         self.assertEqual(parsed, correct)
+
+
+class TestRestrictionParser(unittest.TestCase):
+    def setUp(self):
+        self.string = "\n<br>\nMay not be enrolled in one of the following Levels:\u00a0 \u00a0 \u00a0 \n<br>\n\u00a0 \u00a0 \u00a0 Graduate Semester\n<br>\nMust be enrolled in one of the following Campuses:\u00a0 \u00a0 \u00a0 \n<br>\n\u00a0 \u00a0 \u00a0 Georgia Tech-Atlanta *\n<br>\n<br>\n"
+
+    def test_remove_tags(self):
+        cleaned = rp.remove_empty(rp.clean(rp.split(rp.remove_tags(self.string))))
+        self.assertEqual(cleaned[0], u'May not be enrolled in one of the following Levels:')
+        self.assertEqual(cleaned[1], u'Graduate Semester')
+        self.assertEqual(cleaned[2], u'Must be enrolled in one of the following Campuses:')
+        self.assertEqual(cleaned[3], u'Georgia Tech-Atlanta *')
+
+    def test_output(self):
+        lines = rp.remove_empty(rp.clean(rp.split(rp.remove_tags(self.string))))
+        json = rp.parse(lines)
+        correct = {'restrictions': [u'Levels', u'Campuses'],
+                   u'Levels': {'positive': False, 'requirements': [u'Graduate Semester']},
+                   u'Campuses': {'positive': True, 'requirements': [u'Georgia Tech-Atlanta *']}}
+        self.assertEqual(json, correct)

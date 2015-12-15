@@ -1,6 +1,7 @@
 import scrapy
 from scrapy.loader.processors import TakeFirst, Identity, Join, Compose
 import grouch.parsers.prerequisite_parser as pp
+import grouch.parsers.restriction_parser as rp
 
 
 class CourseLoader(scrapy.loader.ItemLoader):
@@ -17,6 +18,10 @@ class CourseLoader(scrapy.loader.ItemLoader):
     corequisites_out = TakeFirst()
 
     course_attributes_out = Join()
-    restrictions_out = Join()
+
+    restrictions_in = Compose(TakeFirst(), rp.RestrictionParser())
+    restrictions_out = TakeFirst()
+
+
     grade_basis_out = Join()
 
