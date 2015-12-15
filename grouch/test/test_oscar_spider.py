@@ -29,6 +29,7 @@ class TestOscarSpider(unittest.TestCase):
         self.assertEqual(item['number'], "1332")
         self.assertEqual(item['prerequisites'], 
                          {'type': 'or', 'courses' : [u'CS 1322', u'CS 1331']})
+        print item['prerequisites']
 
 
     # extensive use of mocking below
