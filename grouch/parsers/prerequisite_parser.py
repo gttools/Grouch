@@ -1,14 +1,16 @@
 import re
 import w3lib
+from grouch.parsers.parser import Parser
 
 
-class PrerequisiteParser(object):
+class PrerequisiteParser(Parser):
     level = re.compile(r' ?Undergraduate Semester level| ?Graduate Semester level')
     grade = re.compile(r' Minimum Grade of [ABCDFSTU]')
     splitter = re.compile(r'([A-Z]{2,4} [\dX]{4}|\(|\)|\W+)')
 
     def __init__(self):
-        pass
+        self.methods = [self.remove_tags, self.strip_irrelevant, self.tokenize_and_or,
+                        self.remove_whitespace, self.parse_tokens]
 
     @staticmethod
     def remove_tags(item):
@@ -62,11 +64,4 @@ class PrerequisiteParser(object):
         """
         gen = (x for x in item)
         return PrerequisiteParser._parse_inner(gen, {})
-
-    def __call__(self, item):
-        print "called with", item
-        a =  self.parse_tokens(self.remove_whitespace(self.tokenize_and_or(self.strip_irrelevant(self.remove_tags(item)))))
-        print a
-        return a
-
 
