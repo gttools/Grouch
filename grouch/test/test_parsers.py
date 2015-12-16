@@ -1,6 +1,7 @@
 import unittest
 from grouch.parsers.prerequisite_parser import PrerequisiteParser as pp
 from grouch.parsers.restriction_parser import RestrictionParser as rp
+from grouch.parsers.attribute_parser import AttributeParser as ap
 
 class TestPrerequisiteParser(unittest.TestCase):
     maxDiff = None
@@ -115,3 +116,28 @@ class TestRestrictionParser(unittest.TestCase):
                    u'Levels': {'positive': False, 'requirements': [u'Graduate Semester']},
                    u'Campuses': {'positive': True, 'requirements': [u'Georgia Tech-Atlanta *']}}
         self.assertEqual(json, correct)
+
+
+class TestAttributeParser(unittest.TestCase):
+    def setUp(self):
+        self.AS4221 = u'<br>Military Science Course \n<br>\n<br>\n'
+        self.AE3120 = u'<br>Tech Elect CS, Engr, &amp;Sciences \n<br>\n<br>\n'
+        self.PSYC1101 = u'<br>Ethics Requirement, Social Science Requirement \n<br>\n<br>\n'
+        self.CS3210 = u'<br>Computer Systems (CS), Tech Elect CS, Engr, &amp;Sciences \n<br>\n<br>\n'
+
+    def test_basic_attribute_parsing(self):
+        parsed = ap()(self.AS4221)
+        self.assertSetEqual(set(parsed), set([u'Military Science Course']))
+
+    def test_double_parsed(self):
+        parsed = ap()(self.PSYC1101)
+        self.assertSetEqual(set(parsed), set([u'Ethics Requirement', u'Social Science Requirement']))
+
+    def test_parse_engr_sciences(self):
+        parsed = ap()(self.AE3120)
+        self.assertSetEqual(set(parsed), set([u'Tech Elect CS, Engr, &amp;Sciences']))
+
+    def test_parse_engr_sciences_double(self):
+        parsed = ap()(self.CS3210)
+        self.assertSetEqual(set(parsed), set([u'Tech Elect CS, Engr, &amp;Sciences',
+                                              u'Computer Systems (CS)']))
