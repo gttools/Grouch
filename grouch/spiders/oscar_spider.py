@@ -56,8 +56,8 @@ class OscarSpider(scrapy.Spider):
         loader.add_css('hours', 'td.ntdefault', re='([\s\S]*?)<span')
         
         for field in loader._values['fields']:  # introspect the loader
-            regex = "{}[\S\s]*?<\/span>([\S\s]*?)(?:<span|<\/td>)".format(field)
+            # wonky way to deal with adding the regex
+            regex = "{}.{}<\/span>([\S\s]*?)(?:<span|<\/td>)".format(field, "{0,5}")
             loader.add_css(self.field_formats[field], 'td.ntdefault', re=regex)
-            
 
         return loader.load_item()

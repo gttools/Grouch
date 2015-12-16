@@ -4,7 +4,8 @@ from mock import patch, MagicMock
 import grouch
 from grouch import settings
 from grouch.spiders.oscar_spider import OscarSpider
-from grouch.test import CS1332, catalog, term, courses
+from grouch.test import CS1332, catalog, term, courses, GRMN4694
+
 
 class TestOscarSpider(unittest.TestCase):
 
@@ -14,6 +15,7 @@ class TestOscarSpider(unittest.TestCase):
 
     def setUp(self):
         self.cs1332 = scrapy.http.TextResponse("", body=CS1332.body)
+        self.german = scrapy.http.TextResponse("", body=GRMN4694.body)
         self.catalog = scrapy.http.TextResponse("", body=catalog.body)
         self.term = scrapy.http.TextResponse("", body=term.body)
         self.courses = scrapy.http.TextResponse("", body=courses.body)
@@ -27,9 +29,15 @@ class TestOscarSpider(unittest.TestCase):
         self.assertEqual(item['name'], "Data Struct & Algorithms")
         self.assertEqual(item['school'], "CS")
         self.assertEqual(item['number'], "1332")
+        print item
         self.assertEqual(item['prerequisites'], 
                          {'type': 'or', 'courses' : [u'CS 1322', u'CS 1331']})
-        print item['prerequisites']
+
+    def test_parse_detail_with_distraction(self):
+        """The body of this response contains some wonky stuff that will trick bad regex"""
+
+        item = self.spider.parse_detail(self.german)
+        self.assertEqual(item['prerequisites'], {'type': 'and', 'courses': [u'GRMN 2002']})
 
 
     # extensive use of mocking below
