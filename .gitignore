@@ -69,3 +69,5 @@ Session.vim
 .netrwhist
 *~
 
+
+result.json # the output file from the scraper
