@@ -29,7 +29,6 @@ class TestOscarSpider(unittest.TestCase):
         self.assertEqual(item['name'], "Data Struct & Algorithms")
         self.assertEqual(item['school'], "CS")
         self.assertEqual(item['number'], "1332")
-        print item
         self.assertEqual(item['prerequisites'], 
                          {'type': 'or', 'courses' : [u'CS 1322', u'CS 1331']})
 
