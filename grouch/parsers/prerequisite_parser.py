@@ -4,6 +4,9 @@ from grouch.parsers.parser import Parser
 
 
 class PrerequisiteParser(Parser):
+    """
+    A parser to convert the OSCAR prerequisite string into a nested json structure
+    """
     level = re.compile(r' ?Undergraduate Semester level| ?Graduate Semester level')
     grade = re.compile(r' Minimum Grade of [ABCDFSTU]')
     splitter = re.compile(r'([A-Z]{2,4} [\dX]{4}|\(|\)|\W+)')
