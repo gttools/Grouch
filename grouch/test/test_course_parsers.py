@@ -2,6 +2,7 @@ import unittest
 from grouch.parsers.prerequisite_parser import PrerequisiteParser as pp
 from grouch.parsers.restriction_parser import RestrictionParser as rp
 from grouch.parsers.attribute_parser import AttributeParser as ap
+from grouch.parsers.hour_parser import HourParser as hp
 
 class TestPrerequisiteParser(unittest.TestCase):
     maxDiff = None
@@ -141,3 +142,11 @@ class TestAttributeParser(unittest.TestCase):
         parsed = ap()(self.CS3210)
         self.assertSetEqual(set(parsed), set([u'Tech Elect CS, Engr, &amp;Sciences',
                                               u'Computer Systems (CS)']))
+
+class TestHourParser(unittest.TestCase):
+    def setUp(self):
+        self.BMED8997 = u'<td class="ntdefault">\nFor graduate students holding a teaching assistantship.\n<br>\n    1.000 TO     9.000 Credit hours\n<br>\n    1.000 TO     9.000 Lecture hours\n<br>\n<br>\n'
+
+    def test_basic_hours(self):
+        parsed = hp()(self.BMED8997)
+        self.assertEqual(parsed, [u'1.000 TO     9.000 Credit hours', u'1.000 TO     9.000 Lecture hours'])
