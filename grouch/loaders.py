@@ -4,6 +4,7 @@ import grouch.parsers.prerequisite_parser as pp
 import grouch.parsers.restriction_parser as rp
 import grouch.parsers.attribute_parser as ap
 import grouch.parsers.hour_parser as hp
+import grouch.parsers.basis_parser as bp
 
 
 class CourseLoader(scrapy.loader.ItemLoader):
@@ -25,6 +26,7 @@ class CourseLoader(scrapy.loader.ItemLoader):
     restrictions_in = Compose(Join(), rp.RestrictionParser())
     restrictions_out = TakeFirst()
 
+    grade_basis_in = Compose(Join(), bp.BasisParser())
     grade_basis_out = Join()
 
     hours_in = Compose(Join(), hp.HourParser())
