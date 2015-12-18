@@ -25,7 +25,7 @@ class AttributeParser(Parser):
     @staticmethod
     def remove_engr(item):
         s = set(item)
-        s.remove('')
+        s.discard('')
         if u"Tech Elect CS" in s:
             s.add(u'Tech Elect CS, Engr, &amp;Sciences')
             s.remove(u'Tech Elect CS')
