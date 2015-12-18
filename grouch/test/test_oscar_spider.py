@@ -31,6 +31,7 @@ class TestOscarSpider(unittest.TestCase):
         self.assertEqual(item['number'], "1332")
         self.assertEqual(item['prerequisites'], 
                          {'type': 'or', 'courses' : [u'CS 1322', u'CS 1331']})
+        self.assertEqual(item['identifier'], 'CS 1332')
 
     def test_parse_detail_with_distraction(self):
         """The body of this response contains some wonky stuff that will trick bad regex"""

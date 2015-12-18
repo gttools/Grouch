@@ -54,10 +54,18 @@ class OscarSpider(scrapy.Spider):
         loader.add_css('school', 'td.nttitle::text', re='(.*?) ')
         loader.add_css('number', 'td.nttitle::text', re='\d+')
         loader.add_css('hours', 'td.ntdefault', re='([\s\S]*?)<span')
+        loader.add_css('identifier', 'td.nttitle::text', re='(.*?) -')
         
         for field in loader._values['fields']:  # introspect the loader
             # wonky way to deal with adding the regex
             regex = "{}.{}<\/span>([\S\s]*?)(?:<span|<\/td>)".format(field, "{0,5}")
             loader.add_css(self.field_formats[field], 'td.ntdefault', re=regex)
 
+        urls = response.css('td.nttitle a::attr(href)').re('.*listcrse.*?')
+        for url in urls:
+            loader.add_value('sections', scrapy.Request(self.base+url, self.parse_section))
+
         return loader.load_item()
+
+    def parse_section(self, response):
+        return None

@@ -17,6 +17,7 @@ class Course(scrapy.Item):
     fullname = scrapy.Field()
     name = scrapy.Field()
     number = scrapy.Field()
+    identifier = scrapy.Field()
     school = scrapy.Field()
     fields = scrapy.Field()
     prerequisites = scrapy.Field()
@@ -25,4 +26,4 @@ class Course(scrapy.Item):
     restrictions = scrapy.Field()
     course_attributes = scrapy.Field()
     hours = scrapy.Field()
-
+    sections = scrapy.Field()
