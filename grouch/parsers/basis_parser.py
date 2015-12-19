@@ -15,6 +15,4 @@ class BasisParser(Parser):
 
     @staticmethod
     def take_first(item):
-        return item[0]
-
-
+        return item[0].strip()
