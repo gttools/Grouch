@@ -15,13 +15,10 @@ class CourseLoader(scrapy.loader.ItemLoader):
     fields_out = Identity()
 
     prerequisites_in = Compose(TakeFirst(), pp.PrerequisiteParser())
-    prerequisites_out = TakeFirst()
 
     corequisites_in = Compose(TakeFirst(), pp.PrerequisiteParser())
-    corequisites_out = TakeFirst()
 
     course_attributes_in = Compose(Join(), ap.AttributeParser())
-    course_attributes_out = TakeFirst()
 
     restrictions_in = Compose(Join(), rp.RestrictionParser())
     restrictions_out = TakeFirst()
@@ -30,4 +27,12 @@ class CourseLoader(scrapy.loader.ItemLoader):
     grade_basis_out = Join()
 
     hours_in = Compose(Join(), hp.HourParser())
-    hours_out = TakeFirst()
+
+    sections_in = Identity()
+    sections_out = Identity()
+
+
+class SectionLoader(scrapy.loader.ItemLoader):
+    default_input_processor = TakeFirst()
+    default_output_processor = TakeFirst()
+

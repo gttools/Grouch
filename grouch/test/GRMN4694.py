@@ -9,7 +9,6 @@ The course chronicles German technological inventions, industrial development an
         <br>
         <span class="fieldlabeltext">Grade Basis: </span>ALP 
         <br>
-        <a href="/pls/bprod/bwckctlg.p_disp_listcrse?term_in=201602&amp;subj_in=GRMN&amp;crse_in=4694&amp;schd_in=%">All Sections for this Course</a>
         <br>
         <br>
         Sch/Modern Languages Department

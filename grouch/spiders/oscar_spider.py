@@ -1,5 +1,5 @@
 import scrapy
-from grouch.loaders import CourseLoader
+from grouch.loaders import CourseLoader, SectionLoader
 import grouch
 from grouch import items
 
@@ -15,7 +15,7 @@ class OscarSpider(scrapy.Spider):
         "Restrictions": "restrictions",
         "Prerequisites": "prerequisites",
         "Course Attributes": 'course_attributes',
-        "Corequisites": 'corequisites' 
+        "Corequisites": 'corequisites'
     }
 
     def parse(self, response):
@@ -34,7 +34,7 @@ class OscarSpider(scrapy.Spider):
         subjects = response.css("#subj_id option::attr(value)").re(".*")
         if grouch.settings.SUBJECTS:
             subjects = grouch.settings.SUBJECTS
-        for subject in subjects :  #subjects:
+        for subject in subjects:  # subjects:
             yield scrapy.FormRequest.from_response(response,
                                                    callback=self.parse_courses,
                                                    formdata={"sel_subj": ["dummy", subject]})
@@ -48,24 +48,66 @@ class OscarSpider(scrapy.Spider):
 
     def parse_detail(self, response):
         loader = CourseLoader(item=items.Course(), response=response)
-        loader.add_css('fields', 'span.fieldlabeltext::text', re='^(.*?):')
-        loader.add_css('fullname', 'td.nttitle::text', re='.*')
-        loader.add_css('name', 'td.nttitle::text', re='- (.*)')
-        loader.add_css('school', 'td.nttitle::text', re='(.*?) ')
-        loader.add_css('number', 'td.nttitle::text', re='\d+')
-        loader.add_css('hours', 'td.ntdefault', re='([\s\S]*?)<span')
-        loader.add_css('identifier', 'td.nttitle::text', re='(.*?) -')
-        
+        loader.add_css('fields', 'span.fieldlabeltext::text', re=r'^(.*?):')
+        loader.add_css('fullname', 'td.nttitle::text', re=r'.*')
+        loader.add_css('name', 'td.nttitle::text', re=r'- (.*)')
+        loader.add_css('school', 'td.nttitle::text', re=r'(.*?) ')
+        loader.add_css('number', 'td.nttitle::text', re=r'\d+')
+        loader.add_css('hours', 'td.ntdefault', re=r'([\s\S]*?)<span')
+        loader.add_css('identifier', 'td.nttitle::text', re=r'(.*?) -')
+
         for field in loader._values['fields']:  # introspect the loader
             # wonky way to deal with adding the regex
-            regex = "{}.{}<\/span>([\S\s]*?)(?:<span|<\/td>)".format(field, "{0,5}")
+            regex = r"{}.{}<\/span>([\S\s]*?)(?:<span|<\/td>)".format(field, "{0,5}")
             loader.add_css(self.field_formats[field], 'td.ntdefault', re=regex)
 
-        urls = response.css('td.nttitle a::attr(href)').re('.*listcrse.*?')
-        for url in urls:
-            loader.add_value('sections', scrapy.Request(self.base+url, self.parse_section))
+        url = response.css('td.ntdefault a::attr(href)').re('.*listcrse.*')
 
-        return loader.load_item()
+        if url:
+            return scrapy.Request(self.base+url[0], self.parse_section, meta={'course': loader})
+        else:
+            return loader.load_item()
 
     def parse_section(self, response):
-        return None
+        course_loader = response.meta['course']
+        section_table = response.css('div.pagebodydiv>table.datadisplaytable>tr')[:-1]
+        
+        sections = []
+        for header, body in zip(*[iter(section_table)]*2):
+            # https://docs.python.org/2/library/functions.html#zip
+            # This makes possible an idiom for clustering a data series into n-length
+            # groups using zip(*[iter(s)]*n).
+            sections.append(self._parse_section_helper(header, body))
+
+        course_loader.add_value('sections', sections)
+        return course_loader.load_item()
+
+    def _parse_section_helper(self, header, body):
+        loader = SectionLoader(item=items.Section())
+        loader.add_value('section_id', header.re(r'(?:-.*)+ - (.*?)<'))
+        loader.add_value('crn', header.re(r' - (\d{5}) - '))
+        loader.add_value('term', body.css('td::text').re(r'Associated Term'))
+        loader.add_value('campus', body.css('td::text').re(r'Undergraduate Semester \n(.*)\n'))
+        meetings = []
+        instructors = set()
+        for row in body.css('tr')[2:]:
+            blocks = row.css('td.dddefault')
+            meet = dict()
+            meet['time'] = blocks[1].css('td::text').extract()
+            meet['days'] = blocks[2].css('td::text').extract()
+            meet['location'] = blocks[3].css('td::text').extract()
+            meet['type'] = blocks[5].css('td::text').extract()
+
+            for attr in ['time', 'days', 'location', 'type']:
+                meet[attr] = meet[attr][0] if meet[attr] else None
+                meet[attr] = None if meet[attr] == u'\xa0' else meet[attr]
+
+            meet['instructor'] = "".join(blocks[6].css('td::text').extract()).replace('()', '').split(',')
+            meet['instructor'] = [i.strip() for i in meet['instructor']]
+            instructors.add(i for i in meet['instructor'])
+            meetings.append(meet)
+
+        loader.add_value('meetings', meetings)
+        loader.add_value('instructors', list(instructors))
+
+        return loader.load_item()

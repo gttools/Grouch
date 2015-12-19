@@ -14,7 +14,6 @@ body = str("""
             <br>
             <span class="fieldlabeltext">Grade Basis: </span>ALP 
             <br>
-            <a href="/pls/bprod/bwckctlg.p_disp_listcrse?term_in=201602&amp;subj_in=CS&amp;crse_in=1332&amp;schd_in=%">All Sections for this Course</a>
             <br>
             <br>
             Dept/Computer Science Department
