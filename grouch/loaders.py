@@ -36,3 +36,8 @@ class SectionLoader(scrapy.loader.ItemLoader):
     default_input_processor = TakeFirst()
     default_output_processor = TakeFirst()
 
+    meetings_in = Identity()
+    meetings_out = Identity()
+
+    instructors_in = Identity()
+    instructors_out = Identity()

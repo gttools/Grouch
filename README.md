@@ -95,14 +95,16 @@ These are the attributes a course object can have:
 ```
 "sections": [
     {
-        "meetings": {
-            "instructor": ["Jacob R  Eisenstein"], 
-            "location": "Clough Undergraduate Commons 102", 
-            "type": "Lecture*", 
-            "days": "TR", 
-            "time": "3:05 pm - 4:25 pm"
-            }, 
-        "instructors": "Jacob R  Eisenstein", 
+        "meetings": [
+            {
+                "instructor": ["Jacob R  Eisenstein"], 
+                "location": "Clough Undergraduate Commons 102", 
+                "type": "Lecture*", 
+                "days": "TR", 
+                "time": "3:05 pm - 4:25 pm"
+                }, 
+            ]
+        "instructors": ["Jacob R  Eisenstein"], 
         "crn": "30062", 
         "section_id": "A"
      }
