@@ -104,7 +104,8 @@ class OscarSpider(scrapy.Spider):
 
             meet['instructor'] = "".join(blocks[6].css('td::text').extract()).replace('()', '').split(',')
             meet['instructor'] = [i.strip() for i in meet['instructor']]
-            instructors.add(i for i in meet['instructor'])
+            for i in meet['instructor']:
+                instructors.add(i)
             meetings.append(meet)
 
         loader.add_value('meetings', meetings)
