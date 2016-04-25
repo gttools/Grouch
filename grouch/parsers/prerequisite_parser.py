@@ -9,7 +9,7 @@ class PrerequisiteParser(Parser):
     """
     level = re.compile(r' ?Undergraduate Semester level| ?Graduate Semester level')
     grade = re.compile(r' Minimum Grade of [ABCDFSTU]')
-    splitter = re.compile(r'([A-Z]{2,4} [\dX]{4}|\(|\)|\W+)')
+    splitter = re.compile(r'([A-Z]{2,4} [\dX]{4}\w|\(|\)|\W+)')
 
     def __init__(self):
         self.methods = [self.remove_tags, self.strip_irrelevant, self.tokenize_and_or,
