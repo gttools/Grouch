@@ -25,7 +25,8 @@ class OscarSpider(scrapy.Spider):
         # url = response.css(".pagebodydiv form::attr(action)").re(".*")[0]  # url
         term_name = response.css("#term_input_id::attr(name)").re(".*")[0]
         terms = response.css("#term_input_id option::attr(value)").re("\d{6}")
-        terms = [term for term in terms if term.endswith(grouch.settings.SEMESTER_ACCEPT]
+        terms = [term for term in terms if
+                term.endswith(grouch.settings.SEMESTER_ACCEPT)]
         for term in terms[:grouch.settings.SEMESTER_STOP]:
             self.semester, _, self.year = term.partition(" ")
             yield scrapy.FormRequest.from_response(response,
