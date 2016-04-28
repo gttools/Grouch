@@ -19,7 +19,7 @@ NEWSPIDER_MODULE = 'grouch.spiders'
 SEMESTER_STOP = 1
 # empty for all of them
 SUBJECTS = ['CS']
-SEMESTER_IGNORE = "Lang"
+SEMESTER_ACCEPT = ["02", "08", "05"]
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'grouch (+http://www.yourdomain.com)'
