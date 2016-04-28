@@ -57,7 +57,7 @@ class OscarSpider(scrapy.Spider):
         loader.add_css('fullname', 'td.nttitle::text', re=r'.*')
         loader.add_css('name', 'td.nttitle::text', re=r'- (.*)')
         loader.add_css('school', 'td.nttitle::text', re=r'(.*?) ')
-        loader.add_css('number', 'td.nttitle::text', re=r'(\d|X)+\w?')
+        loader.add_css('number', 'td.nttitle::text', re=r'([\dX]+\w?)')
         loader.add_css('hours', 'td.ntdefault', re=r'([\s\S]*?)<span')
         loader.add_css('identifier', 'td.nttitle::text', re=r'(.*?) -')
 
