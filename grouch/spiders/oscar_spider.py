@@ -25,7 +25,10 @@ class OscarSpider(scrapy.Spider):
         # url = response.css(".pagebodydiv form::attr(action)").re(".*")[0]  # url
         term_name = response.css("#term_input_id::attr(name)").re(".*")[0]
         terms = response.css("#term_input_id option::attr(value)").re("\d{6}")
+        terms = [term for term in terms if grouch.settings.SEMESTER_IGNORE not
+                in term]
         for term in terms[:grouch.settings.SEMESTER_STOP]:
+            self.semester, _, self.year = term.partition(" ")
             yield scrapy.FormRequest.from_response(response,
                                                    callback=self.parse_term,
                                                    formdata={term_name: term})
@@ -48,6 +51,8 @@ class OscarSpider(scrapy.Spider):
 
     def parse_detail(self, response):
         loader = CourseLoader(item=items.Course(), response=response)
+        loader.add_value("semester", self.semester)
+        loader.add_value("year", self.year)
         loader.add_css('fields', 'span.fieldlabeltext::text', re=r'^(.*?):')
         loader.add_css('fullname', 'td.nttitle::text', re=r'.*')
         loader.add_css('name', 'td.nttitle::text', re=r'- (.*)')
