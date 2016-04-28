@@ -1,7 +1,7 @@
 Grouch
 ======
 
-Grouch is a tool to gather data from the Georgia Tech's OSCAR Course registration tool and parse it into an easy machine readable format. It makes an attempt to be lightweight and extensible.
+Grouch is a tool to gather data from the Georgia Tech's OSCAR Course registration tool and parse it into an easy machine readable format. It makes an attempt to be lightweight and extensible. It is not in any way approved by Georgia Tech.
 
 ## Table of Contents
  - [Installation](#installation)
