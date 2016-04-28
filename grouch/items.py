@@ -27,6 +27,8 @@ class Course(scrapy.Item):
     course_attributes = scrapy.Field()  # a list of course attributes
     hours = scrapy.Field()  # a list of hours
     sections = scrapy.Field()  # a json structure representing sections
+    semester = scrapy.Field()
+    year = scrapy.Field()
 
 
 class Section(scrapy.Item):
